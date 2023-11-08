@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 
         return titles
     }
-
+/// this is a testing
     private fun handleRetrieveQuoteWithVolley() {
         val queue = Volley.newRequestQueue(this)
         val jsonArrayRequest = JsonArrayRequest(

@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
 import com.android.volley.RequestQueue
@@ -46,12 +47,12 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        // code adapted from AbhiAndroid , n.d
         spinner = binding.spinner
         spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, ArrayList())
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = spinnerAdapter
-
+        // end of adapted code
         textViewYear = binding.textViewYear
         textViewCreator = binding.textViewCreator
         textViewRating = binding.textViewRating
@@ -67,16 +68,16 @@ class MainActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                // wait for button click
+
             }
 
             override fun onNothingSelected(parentView: AdapterView<*>?) {
-                // does not do anything here
+
             }
         })
 
         binding.btnQuote.setOnClickListener {
-            // check data
+            // check available data
             if (data.isNotEmpty()) {
                 val selectedTitle = spinnerAdapter.getItem(spinner.selectedItemPosition)
                 val selectedItem = data.find { it.title == selectedTitle }
@@ -88,14 +89,15 @@ class MainActivity : AppCompatActivity() {
                     textViewEpisodes.text = "Episodes: ${selectedItem.episodes.toString()}"
                     textViewId.text = "ID: ${selectedItem.id.toString()}"
 
-                    // to load and display image
+                    //load and display image using Picasso
+                    // code adapted from GeeksForGeeks , 2019
                     Picasso.get().load(selectedItem.imageUrl).into(imageView)
+                    // end of adapted code
                 }
             }
         }
-
-        // retrieve data and fill in spinner options
-        handleRetrieveQuoteWithVolley()
+        // to retrieve data
+        RetrieveCartoonData()
     }
 
     private fun jsonArrayToStringList(jsonArray: JSONArray): List<String> {
@@ -106,6 +108,7 @@ class MainActivity : AppCompatActivity() {
         return list
     }
 
+    // code adapted from John Codeos , 2021
     private fun parseJson(jsonArray: JSONArray) {
         data.clear()
         for (i in 0 until jsonArray.length()) {
@@ -126,8 +129,8 @@ class MainActivity : AppCompatActivity() {
         }
         spinnerAdapter.notifyDataSetChanged()
     }
-
-    private fun handleRetrieveQuoteWithVolley() {
+    // end of code adapted
+    private fun RetrieveCartoonData() {
         val queue: RequestQueue = Volley.newRequestQueue(this)
         val jsonArrayRequest = JsonArrayRequest(
             Request.Method.GET, "https://api.sampleapis.com/cartoons/cartoons2D", null,
@@ -135,7 +138,7 @@ class MainActivity : AppCompatActivity() {
                 parseJson(response)
             },
             Response.ErrorListener { error ->
-                binding.textView.text = "That didn't work! Error: ${error.message}"
+                Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
             }
         )
         queue.add(jsonArrayRequest)
